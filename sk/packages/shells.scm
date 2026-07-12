@@ -49,21 +49,21 @@
               (lambda _
                 ;; Fish 4.8.0 depends on fixed Fluent Git revisions that are
                 ;; not part of Guix's fish 4.7.1 Cargo input set.
-                (mkdir-p "guix-vendor")
+                (mkdir-p "sk-vendor")
                 (copy-recursively #$%fish-fluent-rs
-                                  "guix-vendor/fluent-rs")
+                                  "sk-vendor/fluent-rs")
                 (copy-recursively #$%fish-fluent-ftl-tools
-                                  "guix-vendor/fluent-ftl-tools")
+                                  "sk-vendor/fluent-ftl-tools")
                 (substitute* "Cargo.toml"
                   (("members = \\[\"crates/\\*\"\\]")
-                   "members = [\"crates/*\"]\nexclude = [\"guix-vendor\"]")
+                   "members = [\"crates/*\"]\nexclude = [\"sk-vendor\"]")
                   (("fluent = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
-                   "fluent = { path = \"guix-vendor/fluent-rs/fluent\" }")
+                   "fluent = { path = \"sk-vendor/fluent-rs/fluent\" }")
                   (("fluent-syntax = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
-                   "fluent-syntax = { path = \"guix-vendor/fluent-rs/fluent-syntax\" }")
+                   "fluent-syntax = { path = \"sk-vendor/fluent-rs/fluent-syntax\" }")
                   (("fluent-ftl-tools = \\{ git = \"https://codeberg.org/danielrainer/fluent-ftl-tools\", rev = \"[^\"]+\" \\}")
-                   "fluent-ftl-tools = { path = \"guix-vendor/fluent-ftl-tools\" }"))
-                (substitute* "guix-vendor/fluent-ftl-tools/Cargo.toml"
+                   "fluent-ftl-tools = { path = \"sk-vendor/fluent-ftl-tools\" }"))
+                (substitute* "sk-vendor/fluent-ftl-tools/Cargo.toml"
                   (("fluent = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
                    "fluent = { path = \"../fluent-rs/fluent\" }")
                   (("fluent-syntax = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
