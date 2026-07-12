@@ -2,8 +2,31 @@
   #:use-module (gnu packages shells)
   #:use-module (guix download)
   #:use-module (guix gexp)
+  #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (guix utils))
+
+(define %fish-fluent-rs
+  (let ((commit "cf712bced280b217b6307edabc2089b3e57204ab"))
+    (origin
+      (method git-fetch)
+      (uri (git-reference
+            (url "https://github.com/danielrainer/fluent-rs")
+            (commit commit)))
+      (file-name (git-file-name "fish-fluent-rs" commit))
+      (sha256
+       (base32 "0c3qd6cvldfpf46cbb2j4hkbrycq4q6b206qiq8vch1gadrvdr50")))))
+
+(define %fish-fluent-ftl-tools
+  (let ((commit "5917664c8f2e4928ef1e480ff5c13bbe1e226066"))
+    (origin
+      (method git-fetch)
+      (uri (git-reference
+            (url "https://codeberg.org/danielrainer/fluent-ftl-tools")
+            (commit commit)))
+      (file-name (git-file-name "fish-fluent-ftl-tools" commit))
+      (sha256
+       (base32 "0yivm9rpvjfs98rczndab6zfah5gjmbcxkhxjm0c1p31jqrngzj9")))))
 
 (define-public fish-latest
   (package
@@ -20,14 +43,29 @@
         (base32 "01z7cfxch2n7mkm3c065pz19ikwalip1za2gx3h5799gvz3n5brk"))))
     (arguments
      (substitute-keyword-arguments (package-arguments fish)
-       ((#:configure-flags flags)
-        #~(append #$flags
-                  ;; Fish 4.8.0 moved localization through Git-only Fluent
-                  ;; dependencies. Keep the shell source-built and reproducible;
-                  ;; revisit localization when Guix main packages that graph.
-                  (list "-DWITH_MESSAGE_LOCALIZATION=OFF")))
        ((#:phases phases)
         #~(modify-phases #$phases
+            (add-after 'unpack 'vendor-fish-git-dependencies
+              (lambda _
+                ;; Fish 4.8.0 depends on fixed Fluent Git revisions that are
+                ;; not part of Guix's fish 4.7.1 Cargo input set.
+                (mkdir-p "guix-vendor")
+                (copy-recursively #$%fish-fluent-rs
+                                  "guix-vendor/fluent-rs")
+                (copy-recursively #$%fish-fluent-ftl-tools
+                                  "guix-vendor/fluent-ftl-tools")
+                (substitute* "Cargo.toml"
+                  (("fluent = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
+                   "fluent = { path = \"guix-vendor/fluent-rs/fluent\" }")
+                  (("fluent-syntax = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
+                   "fluent-syntax = { path = \"guix-vendor/fluent-rs/fluent-syntax\" }")
+                  (("fluent-ftl-tools = \\{ git = \"https://codeberg.org/danielrainer/fluent-ftl-tools\", rev = \"[^\"]+\" \\}")
+                   "fluent-ftl-tools = { path = \"guix-vendor/fluent-ftl-tools\" }"))
+                (substitute* "guix-vendor/fluent-ftl-tools/Cargo.toml"
+                  (("fluent = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
+                   "fluent = { path = \"../fluent-rs/fluent\" }")
+                  (("fluent-syntax = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
+                   "fluent-syntax = { path = \"../fluent-rs/fluent-syntax\" }"))))
             (replace 'patch-tests
               (lambda* (#:key inputs native-inputs #:allow-other-keys)
                 (define (delete-file-if-exists file)
