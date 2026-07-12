@@ -9,7 +9,15 @@ Initial policy:
 - use binary packaging only when source builds are impractical;
 - keep recipes narrow and auditable.
 
-Current packages:
+Current WIP packages:
 
 - =fish-latest=
 
+Status:
+
+- Fish 4.8.0 is not a clean version bump over Guix main's Fish package.
+- It adds fixed Git dependencies for Fluent crates and additional Rust crates
+  beyond the inherited cargo input set.
+- The recipe currently evaluates but does not build. The first unresolved crate
+  after vendoring the Git dependencies is =unic-langid=.
+- Do not wire this into =guix-dotfiles= until =guix build fish-latest= passes.
