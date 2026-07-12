@@ -1,0 +1,15 @@
+#+title: sk-guix
+
+Personal Guix channel for packages that intentionally move faster than Guix
+main on GuixPC.
+
+Initial policy:
+
+- build small, realistic packages from source;
+- use binary packaging only when source builds are impractical;
+- keep recipes narrow and auditable.
+
+Current packages:
+
+- =fish-latest=
+
