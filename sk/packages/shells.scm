@@ -62,4 +62,4 @@
                   (substitute* "tests/checks/colon-delimited-var.fish"
                     (("/usr/bin:a:.:b") "/tmp/bin:a:.:b"))
                   (substitute* "tests/test_driver.py"
-                    (("\"cc\"") "\"gcc\""))))))))))
+                    (("\"cc\"") "\"gcc\"")))))))))))
