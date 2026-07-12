@@ -20,6 +20,12 @@
         (base32 "01z7cfxch2n7mkm3c065pz19ikwalip1za2gx3h5799gvz3n5brk"))))
     (arguments
      (substitute-keyword-arguments (package-arguments fish)
+       ((#:configure-flags flags)
+        #~(append #$flags
+                  ;; Fish 4.8.0 moved localization through Git-only Fluent
+                  ;; dependencies. Keep the shell source-built and reproducible;
+                  ;; revisit localization when Guix main packages that graph.
+                  (list "-DWITH_MESSAGE_LOCALIZATION=OFF")))
        ((#:phases phases)
         #~(modify-phases #$phases
             (replace 'patch-tests
