@@ -55,6 +55,8 @@
                 (copy-recursively #$%fish-fluent-ftl-tools
                                   "guix-vendor/fluent-ftl-tools")
                 (substitute* "Cargo.toml"
+                  (("members = \\[\"crates/\\*\"\\]")
+                   "members = [\"crates/*\"]\nexclude = [\"guix-vendor\"]")
                   (("fluent = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
                    "fluent = { path = \"guix-vendor/fluent-rs/fluent\" }")
                   (("fluent-syntax = \\{ git = \"https://github.com/danielrainer/fluent-rs\", rev = \"[^\"]+\" \\}")
