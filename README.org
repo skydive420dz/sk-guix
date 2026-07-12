@@ -12,8 +12,7 @@ Initial policy:
 Current decisions:
 
 - Keep Fish on mainstream Guix for now.
-- Evaluate Kitty latest in this channel, but do not wire it into
-  =guix-dotfiles= until explicitly chosen.
+- Use =kitty-latest= from this channel on GuixPC.
 
 Current WIP packages:
 
@@ -55,6 +54,9 @@ build-container assumptions:
 Acceptance:
 
 - =guix build -L ~/Projects/sk-guix kitty-latest --no-grafts= passes.
+- =guix shell kitty-latest -- kitty --version= reports =kitty 0.47.4
+  created by Kovid Goyal= after =sk-guix= is installed as a channel.
 - The built binary reports =kitty 0.47.4 created by Kovid Goyal=.
 
-Decision: Kitty latest is viable for evaluation, but not wired into GuixPC yet.
+Decision: Kitty latest is the only package currently promoted from =sk-guix=
+into GuixPC. Additional packages need an explicit decision before wiring.
