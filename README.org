@@ -9,6 +9,35 @@ Initial policy:
 - use binary packaging only when source builds are impractical;
 - keep recipes narrow and auditable.
 
+* Authenticated channel
+
+The authenticated history starts at commit
+=eaade3680892ce74ebae68f4922cd0eb4a463a17=.  Its signing key is published on
+the =keyring= branch and has this fingerprint:
+
+#+begin_src text
+6B09 4D15 B02E 54B0 F6B5  E9E8 6F83 FC62 D232 E5EC
+#+end_src
+
+Consumers should retain this introduction even when advancing the pinned
+channel commit:
+
+#+begin_src scheme
+(channel
+ (name 'sk-guix)
+ (url "https://github.com/skydive420dz/sk-guix.git")
+ (branch "main")
+ (introduction
+  (make-channel-introduction
+   "eaade3680892ce74ebae68f4922cd0eb4a463a17"
+   (openpgp-fingerprint
+    "6B09 4D15 B02E 54B0 F6B5  E9E8 6F83 FC62 D232 E5EC"))))
+#+end_src
+
+Every main-branch commit from the introduction onward must be signed by a key
+authorized in =.guix-authorizations=.  The current key expires on 2028-07-11;
+authorize a replacement in a signed commit before then.
+
 Current decisions:
 
 - Keep Fish on mainstream Guix for now.
