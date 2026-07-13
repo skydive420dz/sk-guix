@@ -1,3 +1,5 @@
 (channel
  (version 0)
- (directory "."))
+ (directory ".")
+ (url "https://github.com/skydive420dz/sk-guix.git")
+ (keyring-reference "keyring"))
